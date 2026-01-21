@@ -2,61 +2,58 @@
 <html lang="hr">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Panel</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Admin Karaoke Player</title>
+  <style>
+    body {
+      background: #0b0b0b;
+      color: #d4af37;
+      font-family: Poppins, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    #videoContainer {
+      margin-top: 20px;
+    }
+    iframe {
+      width: 80%;
+      height: 450px;
+      border: none;
+    }
+    button {
+      padding: 12px 20px;
+      background: #d4af37;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 6px;
+      margin: 10px;
+    }
+    button:hover {
+      background: #f1c94a;
+    }
+  </style>
 </head>
 <body>
 
-<div class="admin">
-  <h1>🛠 Admin Panel</h1>
+  <h1>🎤 Karaoke Admin Player</h1>
 
-  <ul id="playlist"></ul>
+  <!-- Gumb koji će pokrenuti video -->
+  <button onclick="startVideo()">▶️ Play Karaoke</button>
 
-  <button onclick="startPlaylist()">▶️ Pokreni playlistu</button>
-  <button onclick="openAudience()">👥 Publika ekran</button>
+  <div id="videoContainer">
+    <!-- Ovdje će se pojaviti YouTube video -->
+    <iframe id="karaokeFrame" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
 
-  <div id="player"></div>
-</div>
-
-<script src="app.js"></script>
-
-<script>
-// YouTube IFrame API
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-document.head.appendChild(tag);
-
-let player;
-
-function onYouTubeIframeAPIReady() {
-  // Player će se inicijalizirati kad pozovemo playCurrent()
-}
-
-function playVideoById(videoId) {
-  if (player) player.destroy();
-
-  player = new YT.Player('player', {
-    videoId: videoId,
-    playerVars: {
-      autoplay: 1,  // autoplay
-      mute: 1,      // mute za browser autoplay pravila
-      controls: 1,
-      enablejsapi: 1
-    },
-    events: {
-      onReady: function(event) {
-        event.target.playVideo();
-      },
-      onStateChange: function(event) {
-        if (event.data === YT.PlayerState.ENDED) {
-          currentIndex++;
-          playCurrent();
-        }
-      }
+  <script>
+    function startVideo() {
+      const videoId = "D6Ac5JpCHmI"; // zamijeni sa stvarnim YouTube ID-om
+      const iframe = document.getElementById("karaokeFrame");
+      iframe.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
     }
-  });
-}
-</script>
+  </script>
 
 </body>
 </html>
+
