@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html lang="hr">
 <head>
-  <meta charset="UTF-8">
-  <title>Karaoke Event</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Karaoke Prijava</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="card">
   <h1>🎤 Karaoke Prijava</h1>
 
-  <input id="guestName" placeholder="Ime / Stol">
-  <input id="songName" placeholder="Ime pjesme">
+  <input id="name" placeholder="Ime / Stol">
+  <input id="songName" placeholder="Naziv pjesme">
+  <input id="youtubeLink" placeholder="YouTube link ili ID">
 
   <button onclick="submitSong()">Prijavi se</button>
 
   <hr>
 
-  <h3>🔐 Admin prijava</h3>
-  <input id="adminPass" type="password" placeholder="Admin šifra">
-  <button onclick="adminLogin()">Ulaz</button>
+  <h3>Admin prijava</h3>
+  <input id="adminPass" type="password" placeholder="Šifra">
+  <button onclick="adminLogin()">Admin</button>
 </div>
 
 <script src="app.js"></script>
