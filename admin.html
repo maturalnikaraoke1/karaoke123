@@ -18,7 +18,45 @@
   <div id="player"></div>
 </div>
 
-<script src="https://www.youtube.com/iframe_api"></script>
 <script src="app.js"></script>
+
+<script>
+// YouTube IFrame API
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+document.head.appendChild(tag);
+
+let player;
+
+function onYouTubeIframeAPIReady() {
+  // Player će se inicijalizirati kad pozovemo playCurrent()
+}
+
+function playVideoById(videoId) {
+  if (player) player.destroy();
+
+  player = new YT.Player('player', {
+    videoId: videoId,
+    playerVars: {
+      autoplay: 1,  // autoplay
+      mute: 1,      // mute za browser autoplay pravila
+      controls: 1,
+      enablejsapi: 1
+    },
+    events: {
+      onReady: function(event) {
+        event.target.playVideo();
+      },
+      onStateChange: function(event) {
+        if (event.data === YT.PlayerState.ENDED) {
+          currentIndex++;
+          playCurrent();
+        }
+      }
+    }
+  });
+}
+</script>
+
 </body>
 </html>
