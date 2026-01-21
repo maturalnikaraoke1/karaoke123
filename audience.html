@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="hr">
 <head>
@@ -14,5 +16,44 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="app.js"></script>
+
+<script>
+// Server/player logic
+let audiencePlayer;
+
+function onYouTubeIframeAPIReady() {
+  const current = JSON.parse(localStorage.getItem("current"));
+  if (!current) return;
+
+  audiencePlayer = new YT.Player('audiencePlayer', {
+    videoId: current.videoId,
+    playerVars: {
+      autoplay: 1,
+      mute: 0,
+      controls: 0,
+      origin: location.origin
+    }
+  });
+}
+
+function updateNowNext() {
+  const now = JSON.parse(localStorage.getItem("current"));
+  const next = JSON.parse(localStorage.getItem("next"));
+
+  if (now) {
+    document.getElementById("now").innerText =
+      "🎤 Sada pjeva: " + now.name + " – " + now.song;
+  }
+  if (next) {
+    document.getElementById("next").innerText =
+      "⏭ Sljedeći: " + next.name + " – " + next.song;
+  }
+}
+
+window.onload = () => {
+  updateNowNext();
+};
+</script>
+
 </body>
 </html>
