@@ -1,31 +1,42 @@
-const ADMIN_PASSWORD = "laltm123"
+const ADMIN_PASSWORD = "1234";
+
 let currentIndex = 0;
-let player;
-let audiencePlayer;
+
+// Extract YouTube video ID
+function extractVideoID(url) {
+  const regex = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^&#?/]+)/;
+  const match = url.match(regex);
+  return match ? match[1] : url; // ako si samo ID
+}
 
 // ---------------- GOST ----------------
 function submitSong() {
-  const name = guestName.value;
-  const song = songName.value;
+  const name = document.getElementById("name").value;
+  const song = document.getElementById("songName").value;
+  const youtubeLink = document.getElementById("youtubeLink").value;
 
-  if (!name || !song) return alert("Ispuni sva polja!");
+  if (!name || !song || !youtubeLink) return alert("Ispuni sva polja!");
+
+  const id = extractVideoID(youtubeLink);
 
   const list = JSON.parse(localStorage.getItem("playlist") || "[]");
-  list.push({ name, song });
+  list.push({ name, song, videoId: id });
   localStorage.setItem("playlist", JSON.stringify(list));
 
-  alert("Prijava zaprimljena!");
-  guestName.value = "";
-  songName.value = "";
+  alert("Prijava poslano!");
+  document.getElementById("name").value = "";
+  document.getElementById("songName").value = "";
+  document.getElementById("youtubeLink").value = "";
 }
 
-// ---------------- ADMIN ----------------
 function adminLogin() {
-  if (adminPass.value === ADMIN_PASSWORD) {
+  const pass = document.getElementById("adminPass").value;
+  if (pass === ADMIN_PASSWORD) {
     window.location.href = "admin.html";
   } else alert("Pogrešna šifra");
 }
 
+// ---------------- ADMIN ----------------
 function loadAdminList() {
   const ul = document.getElementById("playlist");
   if (!ul) return;
@@ -35,55 +46,36 @@ function loadAdminList() {
 
   list.forEach((item, i) => {
     const li = document.createElement("li");
-    li.innerHTML = `${item.name} – ${item.song}
-    <button onclick="removeSong(${i})">❌</button>`;
+    li.innerHTML = `
+      ${item.name} – ${item.song}
+      <button onclick="removeSong(${i})">❌</button>
+    `;
     ul.appendChild(li);
   });
 }
 
 function removeSong(i) {
-  const list = JSON.parse(localStorage.getItem("playlist"));
+  const list = JSON.parse(localStorage.getItem("playlist") || "[]");
   list.splice(i, 1);
   localStorage.setItem("playlist", JSON.stringify(list));
   loadAdminList();
 }
 
-function startPlaylist() {
-  currentIndex = 0;
-  playCurrent();
-}
-
 function playCurrent() {
-  const list = JSON.parse(localStorage.getItem("playlist"));
-  if (!list[currentIndex]) return alert("Playlist prazna!");
+  const list = JSON.parse(localStorage.getItem("playlist") || "[]");
+  if (!list[currentIndex]) return alert("Playlist je prazan.");
 
-  const query = list[currentIndex].song + " karaoke instrumental";
+  const videoId = list[currentIndex].videoId;
+  document.getElementById("player").innerHTML = `
+    <iframe width="800" height="450" 
+      src="https://www.youtube.com/embed/${videoId}?autoplay=1"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  `;
 
-  fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=1&key=key=AIzaSyBMNIx8X3XmR_gMrTIrX-0NL5NQSDEPDKU
-`)
-    .then(res => res.json())
-    .then(data => {
-      const videoId = data.items[0].id.videoId;
-      loadVideo(videoId);
-      localStorage.setItem("current", JSON.stringify(list[currentIndex]));
-      localStorage.setItem("next", JSON.stringify(list[currentIndex + 1] || null));
-    });
-}
-
-function loadVideo(videoId) {
-  if (player) player.destroy();
-  player = new YT.Player('player', {
-    videoId,
-    playerVars: { autoplay: 1 },
-    events: {
-      onStateChange: e => {
-        if (e.data === YT.PlayerState.ENDED) {
-          currentIndex++;
-          playCurrent();
-        }
-      }
-    }
-  });
+  localStorage.setItem("current", JSON.stringify(list[currentIndex]));
+  localStorage.setItem("next", JSON.stringify(list[currentIndex + 1] || null));
 }
 
 function openAudience() {
@@ -94,23 +86,28 @@ function openAudience() {
 function loadAudience() {
   if (!document.getElementById("audiencePlayer")) return;
 
-  setInterval(() => {
-    const now = JSON.parse(localStorage.getItem("current"));
-    const next = JSON.parse(localStorage.getItem("next"));
+  const now = JSON.parse(localStorage.getItem("current"));
+  const next = JSON.parse(localStorage.getItem("next"));
 
-    if (!now) return;
+  if (now) {
+    document.getElementById("now").innerText = `🎤 Sada pjeva: ${now.name} – ${now.song}`;
+    document.getElementById("audiencePlayer").innerHTML = `
+      <iframe width="800" height="450"
+        src="https://www.youtube.com/embed/${now.videoId}?autoplay=1"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    `;
+  }
 
-    document.getElementById("now").innerText =
-      "🎤 Sada pjeva: " + now.name + " – " + now.song;
-
-    document.getElementById("next").innerText =
-      next ? "⏭ Sljedeći: " + next.name : "";
-
-  }, 1000);
+  if (next) {
+    document.getElementById("next").innerText = `⏭ Sljedeći: ${next.name} – ${next.song}`;
+  }
 }
 
-// ---------------- INIT ----------------
 window.onload = () => {
   loadAdminList();
   loadAudience();
 };
+
+
