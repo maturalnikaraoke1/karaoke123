@@ -1,59 +1,23 @@
 <!DOCTYPE html>
 <html lang="hr">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin Karaoke Player</title>
-  <style>
-    body {
-      background: #0b0b0b;
-      color: #d4af37;
-      font-family: Poppins, sans-serif;
-      text-align: center;
-      padding: 50px;
-    }
-    #videoContainer {
-      margin-top: 20px;
-    }
-    iframe {
-      width: 80%;
-      height: 450px;
-      border: none;
-    }
-    button {
-      padding: 12px 20px;
-      background: #d4af37;
-      border: none;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 6px;
-      margin: 10px;
-    }
-    button:hover {
-      background: #f1c94a;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>🎤 Karaoke Admin Player</h1>
+<h1>🛠 Admin Panel</h1>
 
-  <!-- Gumb koji će pokrenuti video -->
-  <button onclick="startVideo()">▶️ Play Karaoke</button>
+<ul id="playlist"></ul>
 
-  <div id="videoContainer">
-    <!-- Ovdje će se pojaviti YouTube video -->
-    <iframe id="karaokeFrame" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-  </div>
+<button onclick="playCurrent()">▶️ Play Current</button>
+<button onclick="openAudience()">👥 Publika ekran</button>
 
-  <script>
-    function startVideo() {
-      const videoId = "D6Ac5JpCHmI"; // zamijeni sa stvarnim YouTube ID-om
-      const iframe = document.getElementById("karaokeFrame");
-      iframe.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
-    }
-  </script>
+<div id="player"></div>
 
+<script src="app.js"></script>
 </body>
 </html>
+
 
